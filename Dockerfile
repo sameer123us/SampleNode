@@ -1,4 +1,4 @@
-FROM node:24-alpine
+FROM node:22-alpine
 
 # Create app user and group
 RUN addgroup app && adduser -S -G app app
@@ -15,5 +15,5 @@ COPY . .
 # Switch to non-root user for runtime
 USER app
 
-EXPOSE 3000
+EXPOSE 8000
 CMD ["node", "app.js"]
