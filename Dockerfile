@@ -1,19 +1,20 @@
-FROM node:24-alpine
+# Used stable version-LTS
+FROM node:20-alpine
 
-# Create app user and group
-RUN addgroup app && adduser -S -G app app
+# Set working directory inside container
+WORKDIR /app
 
-WORKDIR /usr/src/app
-
-# Copy package files and install dependencies as root
+# Copy package files first
 COPY package*.json ./
-RUN npm ci --omit=dev
 
-# Copy rest of the app
+# Install dependencies-into image
+RUN npm install
+
+# Copy remaining files
 COPY . .
 
-# Switch to non-root user for runtime
-USER app
-
+# Expose application port inside container
 EXPOSE 3000
-CMD ["node", "app.js"]
+# Start the script inside package.json-when container runs
+CMD ["npm", "start"]
+
