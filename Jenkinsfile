@@ -10,7 +10,7 @@
     stages {              // contains all phases of CI-CD pipeline
 
         stage('Pull Code') {     
-            steps {
+            steps {  
                 git(                        // provided by git plugins 
                 branch: 'dev',
                 url: 'https://github.com/harshitmishra25/sample-node-project'
