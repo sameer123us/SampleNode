@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "sample-node-app"
+        CONTAINER_NAME = "node-app-container"
+        PORT = "8000"
+    }
+
+    stages {
+
+        stage('Clone Repository') {
+            steps {
+                git branch: 'dev',
+                    url: 'https://github.com/Jaygohel164/sample-node-project.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME}:latest ."
+            }
+        }
+
+        stage('Stop Old Container') {
+            steps {
+                sh "docker stop ${CONTAINER_NAME} || true"
+                sh "docker rm ${CONTAINER_NAME} || true"
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                sh """
+                docker run -d \
+                  --name ${CONTAINER_NAME} \
+                  -p ${PORT}:${PORT} \
+                  ${IMAGE_NAME}:latest
+                """
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh "docker ps | grep ${CONTAINER_NAME}"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "App running at http://3.109.202.16:8000"
+        }
+        failure {
+            sh "docker logs ${CONTAINER_NAME} || true"
+        }
+    }
+}
